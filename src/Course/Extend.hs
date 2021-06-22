@@ -33,9 +33,8 @@ instance Extend ExactlyOne where
     (ExactlyOne a -> b)
     -> ExactlyOne a
     -> ExactlyOne b
-  (<<=) =
-    error "todo: Course.Extend (<<=)#instance ExactlyOne"
-
+  (<<=) cok eo = 
+    ExactlyOne (cok eo)
 -- | Implement the @Extend@ instance for @List@.
 --
 -- >>> length <<= ('a' :. 'b' :. 'c' :. Nil)
@@ -51,8 +50,8 @@ instance Extend List where
     (List a -> b)
     -> List a
     -> List b
-  (<<=) =
-    error "todo: Course.Extend (<<=)#instance List"
+  (<<=) cok =
+    unfoldr (\l -> if isEmpty l then Empty else Full (cok l, drop 1 l)) 
 
 -- | Implement the @Extend@ instance for @Optional@.
 --

@@ -1,5 +1,6 @@
 {-# LANGUAGE NoImplicitPrelude #-}
 {-# LANGUAGE ScopedTypeVariables #-}
+{-# LANGUAGE  LambdaCase #-}
 
 module Course.Optional where
 
@@ -27,8 +28,11 @@ mapOptional ::
   (a -> b)
   -> Optional a
   -> Optional b
-mapOptional =
-  error "todo: Course.Optional#mapOptional"
+mapOptional f =
+  \case
+    Full v -> Full (f v)
+    Empty  -> Empty 
+  
 
 -- | Bind the given function on the possible value.
 --
@@ -44,8 +48,10 @@ bindOptional ::
   (a -> Optional b)
   -> Optional a
   -> Optional b
-bindOptional =
-  error "todo: Course.Optional#bindOptional"
+bindOptional k =
+  \case
+    Full v -> k v
+    Empty  -> Empty
 
 -- | Return the possible value if it exists; otherwise, the second argument.
 --
@@ -58,8 +64,10 @@ bindOptional =
   Optional a
   -> a
   -> a
-(??) =
-  error "todo: Course.Optional#(??)"
+(??) opt def =
+  case opt of
+    Full v -> v
+    Empty  -> def
 
 -- | Try the first optional for a value. If it has a value, use it; otherwise,
 -- use the second value.
@@ -79,8 +87,10 @@ bindOptional =
   Optional a
   -> Optional a
   -> Optional a
-(<+>) =
-  error "todo: Course.Optional#(<+>)"
+(<+>) l r =
+  case l of
+    Full _ -> l
+    _      -> r
 
 -- | Replaces the Full and Empty constructors in an optional.
 --
@@ -94,8 +104,8 @@ optional ::
   -> b
   -> Optional a
   -> b
-optional =
-  error "todo: Course.Optional#optional"
+optional f def opt =
+  mapOptional f opt ?? def
 
 applyOptional :: Optional (a -> b) -> Optional a -> Optional b
 applyOptional f a = bindOptional (\f' -> mapOptional f' a) f
